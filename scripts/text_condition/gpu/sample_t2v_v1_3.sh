@@ -1,16 +1,16 @@
 
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 torchrun --nnodes=1 --nproc_per_node 8 --master_port 29514 \
+CUDA_VISIBLE_DEVICES=0 torchrun --nnodes=1 --nproc_per_node 1 --master_port 29514 \
     -m opensora.sample.sample \
-    --model_path /storage/ongoing/9.29/mmdit/Open-Sora-Plan/final_ft_any93x352x640_v1_3_bs512_lr1e-5_snr5.0_fps16_zsnr_nofix_16node/checkpoint-5500/model_ema \
+    --model_path "./Open-Sora-Plan-v1.3.0/any93x640x640$" \ 
     --version v1_3 \
     --num_frames 93 \
     --height 352 \
     --width 640 \
     --cache_dir "../cache_dir" \
-    --text_encoder_name_1 "/storage/ongoing/new/Open-Sora-Plan/cache_dir/mt5-xxl" \
+    --text_encoder_name_1 "./mt5-xxl" \
     --text_prompt "examples/sora.txt" \
     --ae WFVAEModel_D8_4x8x8 \
-    --ae_path "/storage/lcm/WF-VAE/results/latent8" \
+    --ae_path "./Open-Sora-Plan-v1.3.0/vae" \
     --save_img_path "./train_1_3_nomotion_fps18" \
     --fps 18 \
     --guidance_scale 7.5 \
