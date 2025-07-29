@@ -1,5 +1,6 @@
 import os
 import torch
+from torch.profiler import profile, record_function, ProfilerActivity
 try:
     import torch_npu
     from opensora.npu_config import npu_config
@@ -39,4 +40,15 @@ if __name__ == "__main__":
     if npu_config is not None and npu_config.on_npu and npu_config.profiling:
         run_model_and_save_samples_npu(args, pipeline, caption_refiner_model, enhance_video_model)
     else:
-        run_model_and_save_samples(args, pipeline, caption_refiner_model, enhance_video_model)
+        trace_file = "opnesoraplan_trace_gpu.json"
+        with profile(
+            activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+            record_shapes=True,
+            profile_memory=True,
+            with_stack=True,
+            with_flops=True,
+            on_trace_ready=lambda prof: prof.export_chrome_trace(trace_file)
+        ) as prof:
+            with record_function("model_inference"):
+                run_model_and_save_samples(args, pipeline, caption_refiner_model, enhance_video_model)
+        print(f"Trace saved to {trace_file}")
